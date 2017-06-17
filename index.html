@@ -107,11 +107,15 @@ var chosenSearch= $(this).attr("data-search");
 
             // Creating and storing an image tag
             var topicImage = $("<img>");
-            topicDiv.addClass("gif");
+            topicImage.addClass("gif");
+            topicDiv.addClass("gifCSS");
             // Setting the src attribute of the image to a property pulled off the result item
             topicImage.attr("src", results[i].images.fixed_height_still.url);
+            topicImage.attr("data-still", results[i].images.fixed_height_still.url);
+            topicImage.attr("data-animate", results[i].images.fixed_height.url);
+            topicImage.attr("data-state", "still");
 
-          
+
             // Appending the paragraph and image tag to the topicDiv
             topicDiv.append(p).css("color", "#9ae1f2");
             topicDiv.append(topicImage);
