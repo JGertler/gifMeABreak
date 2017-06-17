@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Gif Me Life or Gif Me Death</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css?family=Josefin+Slab|Monoton|Playfair+Display" rel="stylesheet">
+</head>
+
+<body class="body">
+
+<div class= "container">
+<div class="jumbotron" style="background:#eeebeb !important">
+  <h1> Gif Me A Break!</h1>
+</div>
+      <div id="buttons"> </div>
+              <br>
+
+          <form id="topic-form" class="col-md-2 col-md-offset-10">
+              <label for="topic-input" style="font-family: Josefin Slab">Add Another Gif Topic</label><br>
+              <input type="text" id="topic-input"><br>
+              <span class="glyphicon glyphicon-arrow-up" aria-hidden="true"></span>
+              <input id="add-topic" type="submit" style="font-weight: bold" value= "add">
+          </form>
+      <div id="images"> </div>
+</div>
+
+
+<script src="http://code.jquery.com/jquery-2.1.3.min.js"></script>
+<script type="text/javascript">
+
+
+
+var topics =[
+"Early 2000s", 
+"Rihanna",
+"Cute Pets",
+"90s Nostalgia",
+"Hip Hop Dance",
+"Ballet",
+"Derp"
+]
+
+// create buttons from array
+function renderButtons() {
+  $("#buttons").empty();
+
+  for (i=0; i<topics.length; i++) {
+    var a = $("<button>");
+    a.attr("data-search", topics[i])
+    a.addClass("btn")
+    a.text(topics[i])
+    // a.data(topics[i])
+    $("#buttons").append(a)
+    $(".btn").css("background-color", "#e24923") 
+    $(".btn").css("color", "white")
+    $(".btn").css("width", "15%")
+    $(".btn").css("margin", "5px")
+  }
+};
+
+
+
+// add new indicies to array 
+    $("#add-topic").on("click", function(event) {
+        event.preventDefault();
+        var addedTopic = $("#topic-input").val().trim();
+        topics.push(addedTopic);
+        renderButtons();
+      });
+
+
+renderButtons();
+
+
+
+$(document).on("click", "button", function() {
+ 
+console.log($(this).attr("data-search"))
+var chosenSearch= $(this).attr("data-search");
+
+
+  var queryURL = "http://api.giphy.com/v1/gifs/search?q=" + chosenSearch + "&api_key=dc6zaTOxFJmzC";
+  
+    $.ajax({
+      url: queryURL,
+      method: "GET"
+    }).done(function(response) {
+          console.log(queryURL);
+          console.log(response);
+          // storing the data from the AJAX request in the results variable
+          var results = response.data;
+          // Looping through each result item
+
+        $("#images").empty();
+          for (var i = 0; i < results.length; i++) {
+            // clear prior images to replace with new images
+            results.remove
+            // gif in paused state gif
+          
+            // Creating and storing a div tag
+            var topicDiv = $("<div>");
+            // Creating a paragraph tag with the result item's rating
+            var p = $("<p>").text("Rating: " + results[i].rating);
+
+            // Creating and storing an image tag
+            var topicImage = $("<img>");
+            topicDiv.addClass("gif");
+            // Setting the src attribute of the image to a property pulled off the result item
+            topicImage.attr("src", results[i].images.fixed_height_still.url);
+
+          
+            // Appending the paragraph and image tag to the topicDiv
+            topicDiv.append(p).css("color", "#9ae1f2");
+            topicDiv.append(topicImage);
+            $("#images").prepend(topicDiv);
+            
+
+          }
+        })
+      });
+
+
+                 // on click of gif, the state should pause or be animated //
+                  $(document).on("click", ".gif", function() {
+                    console.log ("clicked!!!!!!");
+
+                        // The attr jQuery method allows us to get or set the value of any attribute on our HTML element
+                        var state = $(this).attr("data-state");
+                        // If the clicked image's state is still, update its src attribute to what its data-animate value is.
+                        // Then, set the image's data-state to animate
+                        // Else set src to the data-still value
+                        if (state === "still") {
+                          $(this).attr("src", $(this).attr("data-animate"));
+                          $(this).attr("data-state", "animate");
+                        } else {
+                          $(this).attr("src", $(this).attr("data-still"));
+                          $(this).attr("data-state", "still");
+                        }
+                  });
+
+
+
+</script>
+</body>
+
+</html>
